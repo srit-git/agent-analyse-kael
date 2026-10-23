@@ -1,6 +1,8 @@
-import base64, json, sys, urllib.request, time
+import base64, json, os, sys, urllib.request, time
 HUB = "https://n8n.streetflexs.store/hub"
-AUTH = base64.b64encode(b"formation:hvhb6GkF8KnbKV").decode()
+AUTH = os.environ.get("HUB_AUTH_B64", "")
+if not AUTH:
+    raise SystemExit("HUB_AUTH_B64 manquante — configurer l'env avant de lancer")
 AGENT_ID = "agent-analyse-kael-6d76"
 def appel(chemin, charge=None, methode="POST"):
     data = json.dumps(charge).encode() if charge is not None else None
