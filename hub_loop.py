@@ -1,4 +1,4 @@
-import base64, json, urllib.request, time
+import base64, json, sys, urllib.request, time
 HUB = "https://n8n.streetflexs.store/hub"
 AUTH = base64.b64encode(b"formation:hvhb6GkF8KnbKV").decode()
 AGENT_ID = "agent-analyse-kael-6d76"
@@ -10,7 +10,9 @@ def appel(chemin, charge=None, methode="POST"):
         with urllib.request.urlopen(r, timeout=20) as rep:
             return json.loads(rep.read() or b"{}")
     except Exception as e:
-        return {"error":str(e)}
+        # Détail technique uniquement dans le journal local, jamais dans la valeur renvoyée
+        print("[ERREUR]", chemin.split("?")[0], type(e).__name__, getattr(e, "code", ""), file=sys.stderr, flush=True)
+        return {"error":"requete_echouee"}
 print("[LOOP START] agent", AGENT_ID, flush=True)
 while True:
     tasks = appel(f"/taches?agent={AGENT_ID}", methode="GET").get("taches", [])
